@@ -17,6 +17,7 @@ function loginUser($pdo, $login, $password)
     ";
 
     $stmt = $pdo->prepare($sql);
+
     $stmt->execute([
         ':email' => $login,
         ':username' => $login
@@ -24,26 +25,26 @@ function loginUser($pdo, $login, $password)
 
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Check if the user exists and the password matches
+    // Validate credentials
     if (!$user || !password_verify($password, $user['user_password'])) {
         return false;
     }
 
-    // Store user information in the session
-    session_regenerate_id(true);
-
-    //check if user has an active session
+    // Check if account already has an active session
     if (hasActiveUserSession($pdo, $user['user_id'])) {
         return 'active_session';
-    
     }
 
+    // Regenerate PHP session ID
+    session_regenerate_id(true);
+
+    // Store user information
     $_SESSION['user_id'] = $user['user_id'];
     $_SESSION['user_email'] = $user['user_email'];
     $_SESSION['user_username'] = $user['user_username'];
     $_SESSION['user_role'] = $user['user_role'];
 
-    // Record the user's session in the database
+    // Record session in database
     $_SESSION['session_id'] = startSession($pdo);
 
     return true;

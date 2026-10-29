@@ -26,7 +26,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     }else{
     
     $result = loginUser($pdo,$login,$password);
-    if($result === 'true'){
+    if($result === true){
         logActivity(
             $pdo,
             $_SESSION['user_id'],
