@@ -1,44 +1,64 @@
--- TABLE #2 activity_logs table
-CREATE TABLE IF NOT EXISTS activity_logs (
+CREATE TABLE IF NOT EXISTS activity_logs(
     activity_log_id INT AUTO_INCREMENT PRIMARY KEY,
-
-    user_id INT,
+    user_id VARCHAR(255),
     user_email VARCHAR(255),
-
     activity_log_action VARCHAR(50) NOT NULL,
+    activity_log_status ENUM('success', 'failure') DEFAULT 'SUCCESS',
 
-    activity_log_status ENUM('success', 'failed') DEFAULT 'success',
-
-    -- Client Parameters
-    activity_log_ip_address VARCHAR(45),
+    --Client Parameters
+    activity_log_ip_address VARCHAR (45),
     activity_log_user_agent VARCHAR(255),
 
-    -- Timestamp
+    --Timestamp
     activity_log_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table #3 users table
+CREATE TABLE IF NOT EXISTS users(
 
--- TABLE #3 users table
-CREATE TABLE IF NOT EXISTS users (
-    
-    -- PRIMARY KEY FOR USERS TABLE
+    -- Primary key for users table
     user_id INT AUTO_INCREMENT PRIMARY KEY,
 
-    -- Initial User Details
+    -- Initial user details
+    user_email VARCHAR (50) UNIQUE NOT NULL,
+    user_username VARCHAR (20) UNIQUE NOT NULL,
+    user_password VARCHAR (255) NOT NULL,
+    user_role ENUM('admin','manager','user') NOT NULL DEFAULT 'user',
 
-    user_email VARCHAR(255) UNIQUE NOT NULL,
-    user_password VARCHAR(255) NOT NULL,
-    user_role ENUM('admin', 'user') DEFAULT 'user',
+    -- User Created Timestamp default not null
+    user_created_at TIMESTAMP
+        DEFAULT CURRENT_TIMESTAMP,
 
-    -- User Created Timestamp
-    user_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    -- User Updated Timestamp
-    user_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- User updated timestamp
+    user_updated_at TIMESTAMP
+        DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP
+);
 
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-ALTER TABLE users
-ADD COLUMN user_username VARCHAR(100) UNIQUE NOT NULL
-AFTER user_email;
+-- Insert users table
+INSERT INTO users
+(
+    user_email,
+    user_username,
+    user_password,
+    user_role
+)
+VALUES
+(
+    'admin@example.com',
+    'admin',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'admin'
+),
+(
+    'manager@example.com',
+    'manager',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'manager'
+),
+(
+    'user@example.com',
+    'user',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'user'
+);
